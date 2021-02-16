@@ -41,6 +41,9 @@ func TestCreate(t *testing.T) {
         if createdAccount.Id == uuid.Nil {
             t.Error("failed to set account Id")
         }
+        if createdAccount.Type != "accounts" {
+            t.Error("failed to set type to account")
+        }
     })
 
     t.Run("sets org Id to what we ask it to be ", func(t *testing.T) {
