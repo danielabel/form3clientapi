@@ -20,6 +20,7 @@ type account struct {
     Id uuid.UUID `json:"id"`
     OrganisationId uuid.UUID `json:"organisation_id"`
     Attributes attributes `json:"attributes"`
+    Version int32 `json:"version"`
 }
 
 type payload struct {
@@ -28,6 +29,14 @@ type payload struct {
 
 type accountsPayload struct {
     Data []account `json:"data"`
+}
+
+func extractErrorMessage(body []byte) interface{} {
+    var v map[string]interface{}
+    err := json.Unmarshal(body, &v); if err != nil {
+        return ""
+    }
+    return v["error_message"]
 }
 
 var ErrAccountDoesNotExist = errors.New("account does not exist")
@@ -55,7 +64,7 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
         bytes.NewBuffer(requestBody))
     if err != nil {
         log.Printf("err %v\n", err)
-        return account{}, errors.New("fail Marshal")
+        return account{}, errors.New("fail post")
     }
     defer resp.Body.Close()
 
@@ -119,23 +128,32 @@ func countAccounts(pageSize int) (int, error) {
     return len(s.Data), nil
 }
 
-func deleteAccount(id uuid.UUID) error {
+func deleteAccount(id uuid.UUID, version int32) error {
+    url := fmt.Sprintf("%s/organisation/accounts/%s?version=%d", baseURL, id.String(), version)
     client := &http.Client{}
-    req, err := http.NewRequest("DELETE", baseURL + "/organisation/accounts/" + id.String() + "?version=0", nil)
+    req, err := http.NewRequest("DELETE", url, nil)
     if err != nil {
         log.Printf("NewRequest err %v\n", err)
-        return errors.New("NewRequest err")
+        return errors.New("Request failed")
     }
-
     resp, err := client.Do(req); if err != nil {
         log.Printf("err %v\n", err)
-        return errors.New("empty name")
+        return errors.New("failed request")
     }
     defer resp.Body.Close()
 
+    body, err := ioutil.ReadAll(resp.Body); if err != nil {
+        return errors.New("fail read")
+    }
+
+    // note that the behaviour of the test api differs from the documented API behaviour
+    // here we can extract the error from the body and report to calling code using that than
+    // having expectations around response codes
     if resp.StatusCode != http.StatusNoContent {
-        return errors.New("delete failed")
+        message := extractErrorMessage(body)
+        return fmt.Errorf("delete failed: %s", message)
     }
 
     return nil
 }
+

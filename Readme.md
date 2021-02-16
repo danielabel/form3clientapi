@@ -20,15 +20,15 @@ For example only a few required parameters of create are supported by the API (O
 - not using test doubles as the docker image provided acts as one (though that 
   might make testing network error handling hard) 
 - For demonstration purposes only allow setting of basic parameters   
+- Delete account operation differed documentation around error codes - implemented to work with how API work in the mock presented 
 
 ### not yet implemented
-* `delete` needs to accept a version string, rather than being hardcoded
 * test error cases that exist
-* test and handle error cases that are not yet managed
+* test and handle error cases that are not yet managed - what errors can API throw
 * Allow location of service to be set (param, init or env var?)
 * error handling is inconsistent
 * logging needs removing or improving.
-* Be great to be able to set account name on create  
+* Be great to be able to set account name on create (and other 'required fields')  
 * Add Documentation and example tests
 * Handle (and test?) network errors 
 * Handle (and test?) input errors
@@ -43,6 +43,7 @@ For example only a few required parameters of create are supported by the API (O
 * much better error management - tell users' what the issues are
 * Consider trust model - what data can be trusted from whom?
 * Strong TSL support, potentially with 2 way cert checking
+* retries, throttling and backoffs
 
 ### Go lang points of confusion
 * Capitalisation of struts and elements
