@@ -43,8 +43,6 @@ func extractErrorMessage(body []byte) interface{} {
 var ErrAccountDoesNotExist = errors.New("account does not exist")
 var ErrOperationFailed = errors.New("operation failed")
 
-const baseURL = "http://localhost:8080/v1"
-
 func createAccount(orgId uuid.UUID, country string) (account, error) {
 
     p := payload{Data: account{
@@ -60,7 +58,7 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
         return account{}, ErrOperationFailed
     }
 
-    resp, err := http.Post(baseURL + "/organisation/accounts",
+    resp, err := http.Post(getbaseUrl()+ "/organisation/accounts",
         "application/vnd.api+json",
         bytes.NewBuffer(requestBody))
     if err != nil {
@@ -87,7 +85,7 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
 }
 
 func fetchAccount(id uuid.UUID) (account, error) {
-    resp, err := http.Get(baseURL + "/organisation/accounts/" + id.String()); if err != nil {
+    resp, err := http.Get(getbaseUrl() + "/organisation/accounts/" + id.String()); if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return account{}, ErrOperationFailed
 
@@ -110,21 +108,25 @@ func fetchAccount(id uuid.UUID) (account, error) {
 
     return s.Data, nil
 }
+
 func countAccounts(pageSize int) (int, error) {
-    url := fmt.Sprintf("%s/organisation/accounts?page[size]=%d", baseURL, pageSize)
-    resp, err := http.Get(url); if err != nil {
+    url := fmt.Sprintf("%s/organisation/accounts?page[size]=%d", getbaseUrl(), pageSize)
+    resp, err := http.Get(url)
+    if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return 0, ErrOperationFailed
     }
     defer resp.Body.Close()
 
-    body, err := ioutil.ReadAll(resp.Body); if err != nil {
+    body, err := ioutil.ReadAll(resp.Body)
+    if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return 0, ErrOperationFailed
     }
 
     var s accountsPayload
-    err = json.Unmarshal(body, &s); if err != nil {
+    err = json.Unmarshal(body, &s)
+    if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return 0, ErrOperationFailed
     }
@@ -133,7 +135,7 @@ func countAccounts(pageSize int) (int, error) {
 }
 
 func deleteAccount(id uuid.UUID, version int32) error {
-    url := fmt.Sprintf("%s/organisation/accounts/%s?version=%d", baseURL, id.String(), version)
+    url := fmt.Sprintf("%s/organisation/accounts/%s?version=%d", getbaseUrl(), id.String(), version)
     client := &http.Client{}
     req, err := http.NewRequest("DELETE", url, nil)
     if err != nil {
