@@ -8,16 +8,33 @@ import (
 )
 
 func TestCreate(t *testing.T) {
-    initialCount, err := countAccounts(10000)
+    initialCount, _ := countAccounts(10000)
     fmt.Printf("initialCount %v\n", initialCount)
-    createdAccount, _ := createAccount()
+
+    _, err := createAccount()
+    if err != nil {
+        t.Errorf("failed to create %v", err)
+        return
+    }
+
     count, err := countAccounts(10000)
+    if err != nil {
+        t.Errorf("failed to count accounts %v", err)
+        return
+    }
+
     if count != initialCount+ 1 {
         t.Errorf("failed to create account")
     }
+}
+
+func TestFetchAccount(t *testing.T) {
+    createdAccount, _ := createAccount()
+
     account, err := fetchAccount(createdAccount.Id)
     if err != nil {
         t.Errorf("failed to create and fetch account %v",  createdAccount.Id)
+        return
     }
     if account.Id != createdAccount.Id {
         t.Errorf("did not get account ID = %v, want %v", account.Id, createdAccount.Id)
