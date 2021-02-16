@@ -11,14 +11,12 @@ func TestCreate(t *testing.T) {
     initialCount, _ := countAccounts(10000)
     fmt.Printf("initialCount %v\n", initialCount)
 
-    _, err := createAccount()
-    if err != nil {
+    _, err := createAccount(); if err != nil {
         t.Errorf("failed to create %v", err)
         return
     }
 
-    count, err := countAccounts(10000)
-    if err != nil {
+    count, err := countAccounts(10000); if err != nil {
         t.Errorf("failed to count accounts %v", err)
         return
     }
@@ -31,8 +29,7 @@ func TestCreate(t *testing.T) {
 func TestFetchAccount(t *testing.T) {
     createdAccount, _ := createAccount()
 
-    account, err := fetchAccount(createdAccount.Id)
-    if err != nil {
+    account, err := fetchAccount(createdAccount.Id); if err != nil {
         t.Errorf("failed to create and fetch account %v",  createdAccount.Id)
         return
     }
@@ -50,8 +47,7 @@ func TestFetchNonExistingAccount(t *testing.T) {
 
 func TestDelete(t *testing.T) {
     createdAccount, _ := createAccount()
-   err := deleteAccount(createdAccount.Id)
-    if err != nil {
+   err := deleteAccount(createdAccount.Id); if err != nil {
         t.Errorf("failed to delete %v", err)
     }
    _, err = fetchAccount(createdAccount.Id)
