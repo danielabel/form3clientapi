@@ -23,7 +23,6 @@ For example only a few required parameters of create are supported by the API (O
 - Delete account operation differed documentation around error codes - implemented to work with how API work in the mock presented 
 
 ### not yet implemented
-* test error cases that exist
 * test and handle error cases that are not yet managed - what errors can API throw
 * Allow location of service to be set (param, init or env var?)
 * Be great to be able to set account name on create (and other 'required fields')  
@@ -38,7 +37,9 @@ For example only a few required parameters of create are supported by the API (O
  * encapsulate http requests for error handling
 
 ### Production hardening support
-* much better error management - tell users' what the issues are - nested errors
+* use built in [wrapped errors](https://blog.golang.org/go1.13-errors) to Ensure error management tell users' what the issues are - so they can be fixed
+  - both messages from the API service
+  - and faults in the client
 * Consider trust model - what data can be trusted from whom?
 * Strong TSL support, potentially with 2 way cert checking
 * retries, throttling and backoffs

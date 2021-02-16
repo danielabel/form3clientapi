@@ -72,6 +72,20 @@ func TestCreate(t *testing.T) {
            t.Errorf("failed to set country (%v) to what we asked (%v)", createdAccount.Attributes.Country, country)
        }
     })
+
+    t.Run("Passes on API error so user can fix", func(t *testing.T) {
+        createdAccount, err := createAccount(uuid.New(), "USA")
+
+        if err == nil {
+            t.Errorf("Failed to pass back error %v", createdAccount)
+            return
+        }
+
+        // we want to check that it passes on details about bad params
+        if !strings.Contains(err.Error(), "country in body should match '^[A-Z]{2}$") {
+            t.Errorf("failed to report failure well %s", err.Error())
+        }
+    })
 }
 
 func TestFetchAccount(t *testing.T) {

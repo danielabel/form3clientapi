@@ -31,7 +31,7 @@ type accountsPayload struct {
     Data []account `json:"data"`
 }
 
-// is this useful in other places - and should it be unit tested?
+// should it be unit tested?
 func extractErrorMessage(body []byte) interface{} {
     var v map[string]interface{}
     err := json.Unmarshal(body, &v); if err != nil {
@@ -68,20 +68,18 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
         return account{}, ErrOperationFailed
     }
     defer resp.Body.Close()
-
-    if resp.StatusCode != http.StatusCreated {
-        log.Printf("non 201 response %v %v", resp.Status, resp.Body)
-        return account{}, errors.New("non 201 response")
-    }
-
     body, err := ioutil.ReadAll(resp.Body); if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return account{}, ErrOperationFailed
     }
 
+    if resp.StatusCode >= 400 && resp.StatusCode <= 499 {
+        message := extractErrorMessage(body)
+        return account{}, fmt.Errorf("validation failure: %s", message)
+    }
+
     var s payload
     err = json.Unmarshal(body, &s); if err != nil {
-        log.Printf("Operation failed. err: %v\n", err)
         return account{}, ErrOperationFailed
     }
 
@@ -163,4 +161,3 @@ func deleteAccount(id uuid.UUID, version int32) error {
 
     return nil
 }
-
