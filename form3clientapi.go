@@ -35,14 +35,14 @@ var ErrOperationFailed = errors.New("operation failed")
 
 const baseURL = "http://localhost:8080/v1"
 
-func createAccount() (account, error) {
+func createAccount(orgId uuid.UUID, country string) (account, error) {
 
     p := payload{Data: account{
         Type:           "accounts",
         Id:             uuid.New(),
-        OrganisationId: uuid.New(),
+        OrganisationId: orgId,
         Attributes:     attributes{
-            Country: "UK",
+            Country: country,
         }}}
 
     requestBody, err := json.Marshal(p); if err != nil {

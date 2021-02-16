@@ -2,32 +2,76 @@ package form3clientapi
 
 import (
     "errors"
-    "fmt"
     "github.com/google/uuid"
     "testing"
 )
 
+func createAccountWithDefaults() (account, error) {
+    return createAccount(uuid.New(), "UK")
+}
+
 func TestCreate(t *testing.T) {
-    initialCount, _ := countAccounts(10000)
-    fmt.Printf("initialCount %v\n", initialCount)
+    t.Run("creates an account", func(t *testing.T) {
 
-    _, err := createAccount(); if err != nil {
-        t.Errorf("failed to create %v", err)
-        return
-    }
+        // what's the starting number of accounts?
+        initialCount, _ := countAccounts(10000)
 
-    count, err := countAccounts(10000); if err != nil {
-        t.Errorf("failed to count accounts %v", err)
-        return
-    }
+        // create a new account
+        _, err := createAccountWithDefaults(); if err != nil {
+            t.Errorf("failed to create %v", err)
+            return
+        }
 
-    if count != initialCount+ 1 {
-        t.Errorf("failed to create account")
-    }
+        // do we get one more account
+        count, err := countAccounts(10000); if err != nil {
+            t.Errorf("failed to count accounts %v", err)
+            return
+        }
+        if count != initialCount+1 {
+            t.Errorf("failed to create account")
+        }
+    })
+
+    t.Run("returns account details including Id", func(t *testing.T) {
+        createdAccount, err := createAccountWithDefaults(); if err != nil {
+            t.Errorf("failed to create %v", err)
+            return
+        }
+
+        if createdAccount.Id == uuid.Nil {
+            t.Error("failed to set account Id")
+        }
+    })
+
+    t.Run("sets org Id to what we ask it to be ", func(t *testing.T) {
+        // create a new account
+        orgId := uuid.New()
+        createdAccount, err := createAccount(orgId, "UK"); if err != nil {
+            t.Errorf("failed to create %v", err)
+            return
+        }
+
+        if createdAccount.OrganisationId != orgId {
+            t.Errorf("failed to set org Id (%v) to what we asked (%v)", createdAccount.OrganisationId, orgId)
+        }
+    })
+
+    t.Run("sets country to what we ask it to be ", func(t *testing.T) {
+       country := "US"
+       createdAccount, err := createAccount(uuid.New(), country)
+       if err != nil {
+           t.Errorf("failed to create %v", err)
+           return
+       }
+
+       if createdAccount.Attributes.Country != country {
+           t.Errorf("failed to set country (%v) to what we asked (%v)", createdAccount.Attributes.Country, country)
+       }
+    })
 }
 
 func TestFetchAccount(t *testing.T) {
-    createdAccount, _ := createAccount()
+    createdAccount, _ := createAccountWithDefaults()
 
     account, err := fetchAccount(createdAccount.Id); if err != nil {
         t.Errorf("failed to create and fetch account %v",  createdAccount.Id)
@@ -46,7 +90,7 @@ func TestFetchNonExistingAccount(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-    createdAccount, _ := createAccount()
+    createdAccount, _ := createAccountWithDefaults()
    err := deleteAccount(createdAccount.Id); if err != nil {
         t.Errorf("failed to delete %v", err)
     }
