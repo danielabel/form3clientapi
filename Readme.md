@@ -26,21 +26,19 @@ For example only a few required parameters of create are supported by the API (O
 * test error cases that exist
 * test and handle error cases that are not yet managed - what errors can API throw
 * Allow location of service to be set (param, init or env var?)
-* error handling is inconsistent
-* logging needs removing or improving.
 * Be great to be able to set account name on create (and other 'required fields')  
 * Add Documentation and example tests
 * Handle (and test?) network errors 
-* Handle (and test?) input errors
+* Handle (and test?) input errors??
 * Support defaults
+* status code and api error handling should be consistent and useful to caller
 
 ### potential refactors and code improvement 
  * Be consistent in how we make http requests
  * encapsulate http requests for error handling
- * Be consistent in how we log and error 
 
 ### Production hardening support
-* much better error management - tell users' what the issues are
+* much better error management - tell users' what the issues are - nested errors
 * Consider trust model - what data can be trusted from whom?
 * Strong TSL support, potentially with 2 way cert checking
 * retries, throttling and backoffs

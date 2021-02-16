@@ -31,6 +31,7 @@ type accountsPayload struct {
     Data []account `json:"data"`
 }
 
+// is this useful in other places - and should it be unit tested?
 func extractErrorMessage(body []byte) interface{} {
     var v map[string]interface{}
     err := json.Unmarshal(body, &v); if err != nil {
@@ -55,16 +56,16 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
         }}}
 
     requestBody, err := json.Marshal(p); if err != nil {
-        log.Printf("err %v\n", err)
-        return account{}, errors.New("fail Marshal")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
     }
 
     resp, err := http.Post(baseURL + "/organisation/accounts",
         "application/vnd.api+json",
         bytes.NewBuffer(requestBody))
     if err != nil {
-        log.Printf("err %v\n", err)
-        return account{}, errors.New("fail post")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
     }
     defer resp.Body.Close()
 
@@ -74,13 +75,14 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
     }
 
     body, err := ioutil.ReadAll(resp.Body); if err != nil {
-        log.Printf("err %v\n", err)
-        return account{}, errors.New("failed to read body")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
     }
 
     var s payload
     err = json.Unmarshal(body, &s); if err != nil {
-        return account{}, errors.New("fail Unmarshal")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
     }
 
     return s.Data, nil
@@ -88,8 +90,9 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
 
 func fetchAccount(id uuid.UUID) (account, error) {
     resp, err := http.Get(baseURL + "/organisation/accounts/" + id.String()); if err != nil {
-        log.Printf("err %v\n", err)
-        return account{}, errors.New("empty name")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
+
     }
     defer resp.Body.Close()
 
@@ -98,7 +101,8 @@ func fetchAccount(id uuid.UUID) (account, error) {
     }
 
     body, err := ioutil.ReadAll(resp.Body); if err != nil {
-        return account{}, errors.New("fail read")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
     }
 
     var s payload
@@ -111,18 +115,20 @@ func fetchAccount(id uuid.UUID) (account, error) {
 func countAccounts(pageSize int) (int, error) {
     url := fmt.Sprintf("%s/organisation/accounts?page[size]=%d", baseURL, pageSize)
     resp, err := http.Get(url); if err != nil {
-        log.Printf("err %v\n", err)
+        log.Printf("Operation failed. err: %v\n", err)
         return 0, ErrOperationFailed
     }
     defer resp.Body.Close()
 
     body, err := ioutil.ReadAll(resp.Body); if err != nil {
-        return 0, errors.New("fail read")
+        log.Printf("Operation failed. err: %v\n", err)
+        return 0, ErrOperationFailed
     }
 
     var s accountsPayload
     err = json.Unmarshal(body, &s); if err != nil {
-        return 0, errors.New("fail Unmarshal")
+        log.Printf("Operation failed. err: %v\n", err)
+        return 0, ErrOperationFailed
     }
 
     return len(s.Data), nil
@@ -133,17 +139,18 @@ func deleteAccount(id uuid.UUID, version int32) error {
     client := &http.Client{}
     req, err := http.NewRequest("DELETE", url, nil)
     if err != nil {
-        log.Printf("NewRequest err %v\n", err)
-        return errors.New("Request failed")
+        log.Printf("Operation failed. err: %v\n", err)
+        return ErrOperationFailed
     }
     resp, err := client.Do(req); if err != nil {
-        log.Printf("err %v\n", err)
-        return errors.New("failed request")
+        log.Printf("Operation failed. err: %v\n", err)
+        return ErrOperationFailed
     }
     defer resp.Body.Close()
 
     body, err := ioutil.ReadAll(resp.Body); if err != nil {
-        return errors.New("fail read")
+        log.Printf("Operation failed. err: %v\n", err)
+        return ErrOperationFailed
     }
 
     // note that the behaviour of the test api differs from the documented API behaviour
