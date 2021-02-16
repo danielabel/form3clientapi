@@ -2,9 +2,11 @@
 
 A client library codebase submission from Dan Abel.
 
-## A warning
+## A few warnings
 This client has been written as a demonstration by an engineer new to Go Lang
 It would need work to be done to be a valuable and useful client library.
+
+For example only a few required parameters of create are supported by the API (Org id and country)
 
 ## Usage guide
 
@@ -17,32 +19,28 @@ It would need work to be done to be a valuable and useful client library.
   user
 - not using test doubles as the docker image provided acts as one (though that 
   might make testing network error handling hard) 
-  
+- For demonstration purposes only allow setting of basic parameters   
 
 ### not yet implemented
 * `delete` needs to accept a version string, rather than being hardcoded
-* `create` needs to return account details
 * test error cases that exist
-* tet and handle error cases that are not yet managed
-* Allow input of params to users to operate the api (remove hardcoding)
+* test and handle error cases that are not yet managed
 * Allow location of service to be set (param, init or env var?)
 * error handling is inconsistent
 * logging needs removing or improving.
+* Be great to be able to set account name on create  
 * Add Documentation and example tests
 * Handle (and test?) network errors 
 * Handle (and test?) input errors
 * Support defaults
 
-### Issues
-* tests using countAccountsBelow100 only work if there are less than 100 accouns
-
 ### potential refactors and code improvement 
  * Be consistent in how we make http requests
  * encapsulate http requests for error handling
- * 
+ * Be consistent in how we log and error 
 
 ### Production hardening support
-* much better error management
+* much better error management - tell users' what the issues are
 * Consider trust model - what data can be trusted from whom?
 * Strong TSL support, potentially with 2 way cert checking
 
