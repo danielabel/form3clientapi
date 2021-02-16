@@ -43,6 +43,7 @@ For example only a few required parameters of create are supported by the API (O
 * Consider trust model - what data can be trusted from whom?
 * Strong TSL support, potentially with 2 way cert checking
 * retries, throttling and backoffs
+* seek good practise guide to get consistancy and usefulness in Error returns 
 
 ### Go lang points of confusion
 * Capitalisation of struts and elements

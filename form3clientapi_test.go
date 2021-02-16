@@ -92,9 +92,9 @@ func TestFetchAccount(t *testing.T) {
     t.Run("fetches existing account", func(t *testing.T) {
         createdAccount, _ := createAccountWithDefaults()
 
-        account, err := fetchAccount(createdAccount.Id);
+        account, err := fetchAccount(createdAccount.Id)
         if err != nil {
-            t.Errorf("failed to create and fetch account %v", createdAccount.Id)
+            t.Errorf("failed to create and fetch account %v, %s", createdAccount.Id, err.Error())
             return
         }
         if account.Id != createdAccount.Id {
