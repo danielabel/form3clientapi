@@ -1,0 +1,5 @@
+FROM golang:1.15.7-buster
+
+RUN set -ex;
+
+CMD CGO_ENABLED=0 go test -domain=accountapi ./...

@@ -3,6 +3,9 @@ package form3clientapi
 import "testing"
 
 func TestSettingURL(t *testing.T) {
+	// Before all: reset domain
+	setDomain("", "")
+
 	t.Run("get base URL from defaults", func(t *testing.T) {
 		expected := "http://localhost:8080/v1"
 		url := getbaseUrl()

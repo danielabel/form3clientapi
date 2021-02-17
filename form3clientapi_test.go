@@ -2,7 +2,9 @@ package form3clientapi
 
 import (
     "errors"
+    "flag"
     "github.com/google/uuid"
+    "os"
     "strings"
     "testing"
 )
@@ -11,7 +13,19 @@ func createAccountWithDefaults() (account, error) {
     return createAccount(uuid.New(), "UK")
 }
 
+// set via command line flags
+var apiDomain string
+
+func TestMain(m *testing.M) {
+    flag.StringVar(&apiDomain, "domain", "localhost", "api domain")
+    flag.Parse()
+    setDomain(apiDomain, "")
+    exitVal := m.Run()
+    os.Exit(exitVal)
+}
+
 func TestCreate(t *testing.T) {
+
     t.Run("creates an account", func(t *testing.T) {
 
         // what's the starting number of accounts?
@@ -89,6 +103,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestFetchAccount(t *testing.T) {
+
     t.Run("fetches existing account", func(t *testing.T) {
         createdAccount, _ := createAccountWithDefaults()
 
