@@ -4,22 +4,24 @@ import "fmt"
 
 const defaultDomain = "localhost"
 const defaultPort = "8080"
-var userDomain = ""
-var userPort = ""
-func setDomain(domain string, port string) {
-	userDomain = domain
-	userPort = port
+
+var userDomain = defaultDomain
+var userPort = defaultPort
+
+func resetDomain() {
+	userDomain = defaultDomain
+	userPort = defaultPort
 }
 
-func getbaseUrl() string {
-	domain := defaultDomain
-	if userDomain != "" {
-		domain = userDomain
+func setDomain(domain string, port string) {
+	if domain != "" {
+		userDomain = domain
 	}
-	port := defaultPort
-	if userPort != "" {
-		port = userPort
+	if port != "" {
+		userPort = port
 	}
+}
 
-	return fmt.Sprintf("http://%s:%s/v1", domain, port)
+func getBaseUrl() string {
+	return fmt.Sprintf("http://%s:%s/v1", userDomain, userPort)
 }

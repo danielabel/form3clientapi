@@ -58,7 +58,7 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
         return account{}, ErrOperationFailed
     }
 
-    resp, err := http.Post(getbaseUrl()+ "/organisation/accounts",
+    resp, err := http.Post(getBaseUrl()+ "/organisation/accounts",
         "application/vnd.api+json",
         bytes.NewBuffer(requestBody))
     if err != nil {
@@ -85,7 +85,7 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
 }
 
 func fetchAccount(id uuid.UUID) (account, error) {
-    resp, err := http.Get(getbaseUrl() + "/organisation/accounts/" + id.String()); if err != nil {
+    resp, err := http.Get(getBaseUrl() + "/organisation/accounts/" + id.String()); if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return account{}, ErrOperationFailed
 
@@ -110,7 +110,7 @@ func fetchAccount(id uuid.UUID) (account, error) {
 }
 
 func countAccounts(pageSize int) (int, error) {
-    url := fmt.Sprintf("%s/organisation/accounts?page[size]=%d", getbaseUrl(), pageSize)
+    url := fmt.Sprintf("%s/organisation/accounts?page[size]=%d", getBaseUrl(), pageSize)
     resp, err := http.Get(url)
     if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
@@ -135,7 +135,7 @@ func countAccounts(pageSize int) (int, error) {
 }
 
 func deleteAccount(id uuid.UUID, version int32) error {
-    url := fmt.Sprintf("%s/organisation/accounts/%s?version=%d", getbaseUrl(), id.String(), version)
+    url := fmt.Sprintf("%s/organisation/accounts/%s?version=%d", getBaseUrl(), id.String(), version)
     client := &http.Client{}
     req, err := http.NewRequest("DELETE", url, nil)
     if err != nil {
