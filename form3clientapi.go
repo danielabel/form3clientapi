@@ -142,6 +142,8 @@ func deleteAccount(id uuid.UUID, version int32) error {
         log.Printf("Operation failed. err: %v\n", err)
         return ErrOperationFailed
     }
+    req.Close = true
+
     resp, err := client.Do(req); if err != nil {
         log.Printf("Operation failed. err: %v\n", err)
         return ErrOperationFailed
