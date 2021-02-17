@@ -31,7 +31,6 @@ type accountsPayload struct {
     Data []account `json:"data"`
 }
 
-// should it be unit tested?
 func extractErrorMessage(body []byte) interface{} {
     var v map[string]interface{}
     err := json.Unmarshal(body, &v); if err != nil {
@@ -76,10 +75,18 @@ func createAccount(orgId uuid.UUID, country string) (account, error) {
         return account{}, fmt.Errorf("validation failure: %s", message)
     }
 
+    if resp.StatusCode != http.StatusCreated {
+        message := extractErrorMessage(body)
+        return account{}, fmt.Errorf("API reported fail: %s", message)
+    }
+
     var s payload
     err = json.Unmarshal(body, &s); if err != nil {
+        log.Printf("Operation failed. err: %v\n", err)
         return account{}, ErrOperationFailed
     }
+
+
 
     return s.Data, nil
 }
@@ -103,7 +110,13 @@ func fetchAccount(id uuid.UUID) (account, error) {
 
     var s payload
     err = json.Unmarshal(body, &s); if err != nil {
-        return account{}, errors.New("fail Unmarshal")
+        log.Printf("Operation failed. err: %v\n", err)
+        return account{}, ErrOperationFailed
+    }
+
+    if resp.StatusCode != http.StatusOK {
+        message := extractErrorMessage(body)
+        return account{}, fmt.Errorf("API reported fail: %s", message)
     }
 
     return s.Data, nil

@@ -75,16 +75,16 @@ func TestCreate(t *testing.T) {
     })
 
     t.Run("sets country to what we ask it to be ", func(t *testing.T) {
-       country := "US"
-       createdAccount, err := createAccount(uuid.New(), country)
-       if err != nil {
-           t.Errorf("failed to create %v", err)
-           return
-       }
+        country := "US"
+        createdAccount, err := createAccount(uuid.New(), country)
+        if err != nil {
+            t.Errorf("failed to create %v", err)
+            return
+        }
 
-       if createdAccount.Attributes.Country != country {
-           t.Errorf("failed to set country (%v) to what we asked (%v)", createdAccount.Attributes.Country, country)
-       }
+        if createdAccount.Attributes.Country != country {
+            t.Errorf("failed to set country (%v) to what we asked (%v)", createdAccount.Attributes.Country, country)
+        }
     })
 
     t.Run("Passes on API error so user can fix", func(t *testing.T) {
