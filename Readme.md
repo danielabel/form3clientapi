@@ -93,22 +93,22 @@ Alternatively, run `docker-compose up accountapi` and then run `go test`
 
 ## Development details
 ### Technical decision log
-- used Go Modules - relatively new model, but suitable for this library
-- Aiming to use basic Go language constructs and stay away from complexity    
-- Early decision to build a version that does operations with minimal 
+* used Go Modules - relatively new model, but suitable for this library
+* Aiming to use basic Go language constructs and stay away from complexity    
+* Early decision to build a version that does operations with minimal 
   set of parameters and config once operating, expose some key params to
   user
-- Not using test doubles as the docker image provided acts as one (though that 
+* Not using test doubles as the docker image provided acts as one (though that 
   might make testing network error handling hard) 
-- For demonstration purposes only allow setting of basic parameters (not yet meeting expectations of API docs)   
-- Delete account operation differed documentation around error codes - implemented to work with how API work in the mock presented
-- Running from docker-compose runs the tests until they pass due to issues in waiting for dependencies to be available.
+* For demonstration purposes only allow setting of basic parameters (not yet meeting expectations of API docs)   
+* Delete account operation differed documentation around error codes - implemented to work with how API work in the mock presented
+* Running from docker-compose runs the tests until they pass due to issues in waiting for dependencies to be available.
 
 ### What I want to do, but did not have time to complete 
-  I'd love to have time to look into [wait-for-it](https://github.com/vishnubob/wait-for-it)
-- I'm unhappy with the errors and would like to both support nested errors and also have structure to contain details from the API
-- I would like to use HTTP stubbing to allow me to test both network errors and http 500s - I ran out of time to find out how to do this well
-- offer a richer API for create that is more like an usable API
+* I'd love to have time to look into [wait-for-it](https://github.com/vishnubob/wait-for-it)
+* I'm unhappy with the errors and would like to both support nested errors and also have structure to contain details from the API
+* I would like to use HTTP stubbing to allow me to test both network errors and http 500s - I ran out of time to find out how to do this well
+* offer a richer API for create that is more like an usable API
   
 ### potential refactors and code improvement
 * Add [testable examples](https://blog.golang.org/examples)  
